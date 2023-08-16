@@ -11,11 +11,11 @@ import Login from "./pages/Auth/Login";
 import { privateRoutes, publicRoutes } from "./routers/router";
 import storageService from "./services/storage.service";
 import { fetchGetCurrentUser, setuser } from "./store/userSlice/userSlice";
+import socket from "./socket";
 
 function App() {
   const token = storageService.get("token");
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (token) {
       (async () => {

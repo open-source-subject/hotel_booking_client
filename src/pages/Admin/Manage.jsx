@@ -63,8 +63,12 @@ import {
 import { fetchGetBookingsAdmin } from "../../store/bookingSlice/bookingSlice";
 import Card from "../../components/Card/Card";
 import BillModal from "../../components/Modal/BillModal";
+import socket from "../../socket";
 
 const UserManage = () => {
+  socket.on("receive-check-in", (result) => {
+    console.log("result check in", result);
+  });
   const [iconsActive, setIconsActive] = useState("tab1");
   const [deleteFlag, setDeleteFlag] = useState(false);
   const [pageNum, setPageNum] = useState(1);
