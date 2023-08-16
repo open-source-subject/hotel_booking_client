@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { fetchCreateBooking } from "../../store/bookingSlice/bookingSlice";
 import Swal from "sweetalert2";
+import socket from "../../socket";
 
 const Reservation = ({
   expectedCheckIn,
@@ -19,6 +20,7 @@ const Reservation = ({
   const [discountPrice, setDiscountPrice] = useState(0);
   const dispatch = useDispatch();
   useEffect(() => {
+  
     // console.log(services);
     // if (Object.keys(room).length > 0) {
     //   setPrice((prev) => prev + room.price);
@@ -189,32 +191,39 @@ const Reservation = ({
               const servicesUpdate = services.map((service) => {
                 return { serviceId: service.id, amount: 1 };
               });
+              const data = {
+                roomIds: [room.id],
+                expectedCheckIn,
+                expectedCheckOut,
+                services: servicesUpdate,
+              };
+              socket.emit("check-in", data);
 
-              const result = await dispatch(
-                fetchCreateBooking({
-                  roomIds: [room.id],
-                  expectedCheckIn,
-                  expectedCheckOut,
-                  services: servicesUpdate,
-                })
-              )
-                .then(unwrapResult)
-                .then((originalPromiseResult) => {
-                  console.log(originalPromiseResult);
-                  if (originalPromiseResult.status == "SUCCESS") {
-                    Swal.fire("Đặt phòng thành công", "", "success");
-                    setTimeout(() => {
-                      window.location.href = "/booking-cart";
-                    }, 1500);
-                    reservation(step + 1);
-                  } else {
-                    Swal.fire("Có lỗi xảy ra", "", "error");
-                  }
-                })
-                .catch((rejectedValueOrSerializedError) => {
-                  Swal.fire("Có lỗi xảy ra", "", "error");
-                  console.log(rejectedValueOrSerializedError);
-                });
+              // const result = await dispatch(
+              //   fetchCreateBooking({
+              //     roomIds: [room.id],
+              //     expectedCheckIn,
+              //     expectedCheckOut,
+              //     services: servicesUpdate,
+              //   })
+              // )
+              //   .then(unwrapResult)
+              //   .then((originalPromiseResult) => {
+              //     console.log(originalPromiseResult);
+              //     if (originalPromiseResult.status == "SUCCESS") {
+              //       Swal.fire("Đặt phòng thành công", "", "success");
+              //       setTimeout(() => {
+              //         window.location.href = "/booking-cart";
+              //       }, 1500);
+              //       reservation(step + 1);
+              //     } else {
+              //       Swal.fire("Có lỗi xảy ra", "", "error");
+              //     }
+              //   })
+              //   .catch((rejectedValueOrSerializedError) => {
+              //     Swal.fire("Có lỗi xảy ra", "", "error");
+              //     console.log(rejectedValueOrSerializedError);
+              //   });
             }
           }
         }}

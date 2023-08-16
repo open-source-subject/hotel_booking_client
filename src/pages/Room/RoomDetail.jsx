@@ -13,8 +13,10 @@ import {
 } from "../../store/roomSlice/roomSlice";
 import "./roomDetail.scss";
 import OwlCarousel from "react-owl-carousel";
+import socket from "../../socket";
 
 const RoomDetail = () => {
+ 
   let { roomId } = useParams();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);

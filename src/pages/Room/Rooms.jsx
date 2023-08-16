@@ -18,6 +18,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import socket from "../../socket";
 
 const Rooms = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,21 @@ const Rooms = () => {
     );
   };
 
+  socket.on("receive-check-in", (result) => {
+    console.log("result", result);
+    if (result?.status === "SUCCESS") {
+      console.log("result check in", result);
+      const room = result.data.rooms[0];
+      room.isAvailable = false;
+      const index = rooms.findIndex((item) => item.id === room.id);
+      ìf(index  !== -1) {
+        rooms[index] = room;
+        const newRooms = [...rooms];
+        setRooms(() => newRooms);
+      }
+    }
+  });
+
   useEffect(() => {
     (async () => {
       const result = await dispatch(
@@ -43,8 +59,8 @@ const Rooms = () => {
         .then((originalPromiseResult) => {
           if (originalPromiseResult.status == "SUCCESS") {
             setRooms(originalPromiseResult.data.items);
+            console.log(originalPromiseResult.data.items);
             setPageTotal(originalPromiseResult.data.meta.totalPages);
-            console.log(originalPromiseResult);
           } else {
             Swal.fire("Lỗi Server", "", "error");
           }
@@ -58,6 +74,8 @@ const Rooms = () => {
 
     // return () => {}; // no-op
   }, [pageNum]);
+
+  console.log("rooms", rooms);
 
   return (
     <div>
